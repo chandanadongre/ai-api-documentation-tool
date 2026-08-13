@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Project, ProjectCreate, Endpoint, DTO } from '../models/models';
+import { Project, ProjectCreate, Endpoint, DTO, ChatMessage } from '../models/models';
 
 @Injectable({ providedIn: 'root' })
 export class ProjectsService {
@@ -53,5 +53,19 @@ export class ProjectsService {
 
   playground(project_id: string, method: string, url: string, headers: Record<string, string>, body: any) {
     return this.http.post<any>(`${this.API}/projects/${project_id}/playground`, { method, url, headers, body });
+  }
+
+  getChatHistory(project_id: string) {
+    return this.http.get<ChatMessage[]>(`${this.API}/projects/${project_id}/ai/history`);
+  }
+
+  clearChatHistory(project_id: string) {
+    return this.http.delete(`${this.API}/projects/${project_id}/ai/history`);
+  }
+
+  chat(project_id: string, message: string) {
+    return this.http.post<{ role: string; content: string }>(
+      `${this.API}/projects/${project_id}/ai/chat`, { message }
+    );
   }
 }

@@ -2,8 +2,8 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.core.config import settings
 from app.db.session import Base, engine
-from app.models import user, project, endpoint, dto  # noqa: ensure all models registered
-from app.routers import auth, projects, repositories, endpoints, openapi_router
+from app.models import user, project, endpoint, dto, chat  # noqa: ensure all models registered
+from app.routers import auth, projects, repositories, endpoints, openapi_router, ai
 
 Base.metadata.create_all(bind=engine)
 
@@ -26,8 +26,9 @@ app.include_router(projects.router)
 app.include_router(repositories.router)
 app.include_router(endpoints.router)
 app.include_router(openapi_router.router)
+app.include_router(ai.router)
 
 
 @app.get("/health")
 def health():
-    return {"status": "ok", "service": "API Documentation AI", "version": "0.2.0"}
+    return {"status": "ok", "service": "API Documentation AI", "version": "0.3.0"}

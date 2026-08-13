@@ -17,7 +17,7 @@ import { interval, Subscription } from 'rxjs';
 import { switchMap, takeWhile } from 'rxjs/operators';
 import { ProjectsService } from '../../../core/services/projects.service';
 import { AuthService } from '../../../core/services/auth.service';
-import { Project, Endpoint } from '../../../core/models/models';
+import { Project, Endpoint, ChatMessage } from '../../../core/models/models';
 
 @Component({
   selector: 'app-project-detail',
@@ -108,31 +108,29 @@ import { Project, Endpoint } from '../../../core/models/models';
 
         <!-- Main panel -->
         <div class="main-panel">
-          @if (!selectedEndpoint()) {
-            <div class="empty-state">
-              <mat-icon>api</mat-icon>
-              <p>Select an endpoint to view documentation, try it out, or export</p>
-            </div>
-          } @else {
-            <mat-tab-group animationDuration="150ms" class="detail-tabs">
+          <mat-tab-group animationDuration="150ms" class="detail-tabs">
 
-              <!-- ===== DOCS TAB ===== -->
-              <mat-tab label="📄 Documentation">
-                <div class="tab-content">
+            <!-- ===== DOCS TAB ===== -->
+            <mat-tab label="📄 Documentation">
+              <div class="tab-content">
+                @if (!selectedEndpoint()) {
+                  <div class="empty-state-inline">
+                    <mat-icon>api</mat-icon>
+                    <p>Select an endpoint from the sidebar to view its documentation.</p>
+                  </div>
+                } @else {
                   <div class="detail-header">
                     <span [class]="'badge-lg badge-' + selectedEndpoint()!.http_method.toLowerCase()">
                       {{ selectedEndpoint()!.http_method }}
                     </span>
                     <span class="detail-path">{{ selectedEndpoint()!.path }}</span>
                   </div>
-
                   <div class="detail-meta">
                     <div class="meta-item"><span class="meta-label">Controller</span><span>{{ selectedEndpoint()!.controller_name || '—' }}</span></div>
                     <div class="meta-item"><span class="meta-label">Method</span><span>{{ selectedEndpoint()!.method_name || '—' }}</span></div>
                     <div class="meta-item"><span class="meta-label">Auth</span><span>{{ selectedEndpoint()!.auth_required ? '🔐 JWT Bearer' : '🔓 None' }}</span></div>
                     <div class="meta-item"><span class="meta-label">Source</span><span class="mono">{{ selectedEndpoint()!.source_file || '—' }}</span></div>
                   </div>
-
                   @if (selectedEndpoint()!.parameters.length > 0) {
                     <h3>Parameters</h3>
                     <table class="params-table">
@@ -151,8 +149,9 @@ import { Project, Endpoint } from '../../../core/models/models';
                   } @else {
                     <p class="muted">No parameters detected for this endpoint.</p>
                   }
-                </div>
-              </mat-tab>
+                }
+              </div>
+            </mat-tab>
 
               <!-- ===== PLAYGROUND TAB ===== -->
               <mat-tab label="🚀 Playground">
@@ -263,8 +262,69 @@ import { Project, Endpoint } from '../../../core/models/models';
                 </div>
               </mat-tab>
 
+              <!-- ===== AI ASSISTANT TAB ===== -->
+              <mat-tab label="🤖 AI Assistant">
+                <div class="tab-content ai-tab">
+                  <div class="ai-layout">
+
+                    <!-- Suggested questions -->
+                    <div class="suggestions">
+                      @for (q of SUGGESTED; track q) {
+                        <button class="suggestion-chip" (click)="sendMessage(q)">{{ q }}</button>
+                      }
+                    </div>
+
+                    <!-- Messages -->
+                    <div class="chat-messages">
+                      @if (chatMessages().length === 0 && !chatLoading()) {
+                        <div class="chat-empty">
+                          <span class="chat-bot-icon">🤖</span>
+                          <p>Hello! I'm your AI assistant for <strong>{{ project()!.name }}</strong>.</p>
+                          <p class="muted">Ask me anything about this API — endpoints, authentication, code examples, or test cases.</p>
+                        </div>
+                      }
+                      @for (msg of chatMessages(); track msg.id) {
+                        <div [class]="'chat-msg chat-msg-' + msg.role">
+                          <span class="msg-avatar">{{ msg.role === 'user' ? '👤' : '🤖' }}</span>
+                          <div class="msg-bubble">
+                            <pre class="msg-content">{{ msg.content }}</pre>
+                          </div>
+                        </div>
+                      }
+                      @if (chatLoading()) {
+                        <div class="chat-msg chat-msg-assistant">
+                          <span class="msg-avatar">🤖</span>
+                          <div class="msg-bubble typing">
+                            <span></span><span></span><span></span>
+                          </div>
+                        </div>
+                      }
+                    </div>
+
+                    <!-- Input -->
+                    <div class="chat-input-row">
+                      <textarea
+                        class="chat-input"
+                        [(ngModel)]="chatInput"
+                        (keydown)="onChatKeydown($event)"
+                        placeholder="Ask anything about this API... (Enter to send)"
+                        rows="2"
+                        [disabled]="chatLoading()"
+                      ></textarea>
+                      <div class="chat-actions">
+                        <button mat-flat-button color="primary" (click)="sendMessage()" [disabled]="chatLoading() || !chatInput.trim()">
+                          @if (chatLoading()) { <mat-spinner diameter="16" /> } @else { Send }
+                        </button>
+                        <button mat-icon-button (click)="clearChat()" matTooltip="Clear history"><mat-icon>delete_outline</mat-icon></button>
+                      </div>
+                    </div>
+
+                  </div>
+                </div>
+              </mat-tab>
+
             </mat-tab-group>
-          }
+          </div>
         </div>
       </div>
     }
@@ -368,6 +428,37 @@ import { Project, Endpoint } from '../../../core/models/models';
     .preview-section { margin-top:8px; }
     .preview-header { display:flex; align-items:center; justify-content:space-between; }
     .preview-body { max-height:500px; }
+
+    /* AI tab */
+    .ai-tab { padding:0 !important; height:calc(100vh - 160px); }
+    .ai-layout { display:flex; flex-direction:column; height:100%; }
+    .suggestions { display:flex; flex-wrap:wrap; gap:8px; padding:16px 20px 8px; border-bottom:1px solid #f0f0f0; }
+    .suggestion-chip { background:#f0f4ff; border:1px solid #c5d0f5; color:#3d5afe; border-radius:16px; padding:5px 12px; font-size:12px; cursor:pointer; transition:background 0.15s; white-space:nowrap; }
+    .suggestion-chip:hover { background:#dce4ff; }
+    .chat-messages { flex:1; overflow-y:auto; padding:16px 20px; display:flex; flex-direction:column; gap:16px; }
+    .chat-empty { display:flex; flex-direction:column; align-items:center; justify-content:center; height:100%; text-align:center; color:#666; gap:8px; }
+    .chat-bot-icon { font-size:40px; }
+    .chat-msg { display:flex; gap:10px; align-items:flex-start; }
+    .chat-msg-user { flex-direction:row-reverse; }
+    .msg-avatar { font-size:20px; flex-shrink:0; margin-top:2px; }
+    .msg-bubble { max-width:75%; padding:10px 14px; border-radius:12px; font-size:13px; line-height:1.6; }
+    .chat-msg-user .msg-bubble { background:#1a73e8; color:#fff; border-bottom-right-radius:3px; }
+    .chat-msg-assistant .msg-bubble { background:#f5f5f5; color:#1a1a1a; border-bottom-left-radius:3px; }
+    .msg-content { margin:0; white-space:pre-wrap; word-break:break-word; font-family:inherit; font-size:13px; }
+    .chat-msg-user .msg-content { color:#fff; }
+    .typing { display:flex; gap:4px; align-items:center; padding:12px 16px !important; }
+    .typing span { width:7px; height:7px; background:#999; border-radius:50%; animation:bounce 1.2s infinite; }
+    .typing span:nth-child(2) { animation-delay:0.2s; }
+    .typing span:nth-child(3) { animation-delay:0.4s; }
+    @keyframes bounce { 0%,60%,100% { transform:translateY(0); } 30% { transform:translateY(-6px); } }
+    .chat-input-row { display:flex; gap:8px; padding:12px 20px; border-top:1px solid #e0e0e0; align-items:flex-end; background:#fff; }
+    .chat-input { flex:1; font-family:inherit; font-size:13px; padding:10px 12px; border:1px solid #ddd; border-radius:8px; resize:none; outline:none; line-height:1.5; }
+    .chat-input:focus { border-color:#1a73e8; }
+    .chat-actions { display:flex; flex-direction:column; gap:4px; }
+
+    /* Shared empty state */
+    .empty-state-inline { display:flex; flex-direction:column; align-items:center; justify-content:center; height:300px; color:#ccc; gap:12px; }
+    .empty-state-inline mat-icon { font-size:48px; width:48px; height:48px; }
   `]
 })
 export class ProjectDetailComponent implements OnInit, OnDestroy {
@@ -388,6 +479,17 @@ export class ProjectDetailComponent implements OnInit, OnDestroy {
   downloading = signal(false);
   previewing = signal(false);
   openapiPreview = signal<any>(null);
+
+  // AI chat state
+  chatMessages = signal<ChatMessage[]>([]);
+  chatInput = '';
+  chatLoading = signal(false);
+  readonly SUGGESTED = [
+    'How do I authenticate with this API?',
+    'What endpoints are available?',
+    'Generate a curl example for the first POST endpoint.',
+    'What fields are required for creating a resource?',
+  ];
 
   private pollSub?: Subscription;
   private projectId = '';
@@ -429,6 +531,7 @@ export class ProjectDetailComponent implements OnInit, OnDestroy {
       eps.forEach(e => counts[e.http_method] = (counts[e.http_method] || 0) + 1);
       this.methodCounts.set(Object.entries(counts).map(([method, count]) => ({ method, count })));
     });
+    this.loadChatHistory();
   }
 
   selectEndpoint(ep: Endpoint) {
@@ -495,6 +598,48 @@ export class ProjectDetailComponent implements OnInit, OnDestroy {
   copyPreview() {
     navigator.clipboard.writeText(JSON.stringify(this.openapiPreview(), null, 2));
     this.snackBar.open('Copied to clipboard', '', { duration: 2000 });
+  }
+
+  loadChatHistory() {
+    this.projectsService.getChatHistory(this.projectId).subscribe({
+      next: (msgs) => this.chatMessages.set(msgs),
+      error: () => {},
+    });
+  }
+
+  sendMessage(text?: string) {
+    const message = (text || this.chatInput).trim();
+    if (!message || this.chatLoading()) return;
+    this.chatInput = '';
+    this.chatLoading.set(true);
+
+    // Optimistically add user message
+    this.chatMessages.update(msgs => [...msgs, { id: Date.now().toString(), role: 'user', content: message }]);
+
+    this.projectsService.chat(this.projectId, message).subscribe({
+      next: (res) => {
+        this.chatMessages.update(msgs => [...msgs, { id: (Date.now() + 1).toString(), role: 'assistant', content: res.content }]);
+        this.chatLoading.set(false);
+        setTimeout(() => this.scrollChat(), 50);
+      },
+      error: () => {
+        this.chatMessages.update(msgs => [...msgs, { id: (Date.now() + 1).toString(), role: 'assistant', content: '⚠️ Failed to get a response. Check your Groq API key.' }]);
+        this.chatLoading.set(false);
+      },
+    });
+  }
+
+  clearChat() {
+    this.projectsService.clearChatHistory(this.projectId).subscribe(() => this.chatMessages.set([]));
+  }
+
+  scrollChat() {
+    const el = document.querySelector('.chat-messages');
+    if (el) el.scrollTop = el.scrollHeight;
+  }
+
+  onChatKeydown(event: KeyboardEvent) {
+    if (event.key === 'Enter' && !event.shiftKey) { event.preventDefault(); this.sendMessage(); }
   }
 
   ngOnDestroy() { this.pollSub?.unsubscribe(); }
