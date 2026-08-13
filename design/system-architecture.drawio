@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="app.diagrams.net" modified="2024-01-01T00:00:00.000Z" agent="APIForge AI" version="21.0.0">
+  <diagram name="APIForge AI — System Architecture" id="system-architecture">
+    <mxGraphModel dx="1422" dy="762" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1654" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- Title -->
+        <mxCell id="title" value="APIForge AI — System Architecture" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=20;fontStyle=1;fontColor=#1a1a2e;" vertex="1" parent="1">
+          <mxGeometry x="427" y="30" width="800" height="40" as="geometry" />
+        </mxCell>
+
+        <!-- ===== FRONTEND LAYER ===== -->
+        <mxCell id="fe-bg" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;opacity=50;" vertex="1" parent="1">
+          <mxGeometry x="80" y="100" width="1480" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="fe-label" value="Frontend Layer" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;fontStyle=1;fontColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="90" y="105" width="150" height="30" as="geometry" />
+        </mxCell>
+
+        <mxCell id="fe-auth" value="🔐 Auth Module&#xa;Login / Register&#xa;JWT Management" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1a73e8;strokeColor=#1557b0;fontColor=#ffffff;fontSize=11;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="120" y="140" width="180" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="fe-dashboard" value="📊 Dashboard&#xa;Projects List&#xa;Stats Overview" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1a73e8;strokeColor=#1557b0;fontColor=#ffffff;fontSize=11;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="340" y="140" width="180" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="fe-explorer" value="🔍 API Explorer&#xa;Endpoint List&#xa;API Playground" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1a73e8;strokeColor=#1557b0;fontColor=#ffffff;fontSize=11;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="560" y="140" width="180" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="fe-ai" value="🤖 AI Assistant&#xa;Chat Interface&#xa;Code Generation" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1a73e8;strokeColor=#1557b0;fontColor=#ffffff;fontSize=11;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="780" y="140" width="180" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="fe-tests" value="🧪 Test Generator&#xa;JUnit / pytest&#xa;Postman Export" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1a73e8;strokeColor=#1557b0;fontColor=#ffffff;fontSize=11;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1000" y="140" width="180" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="fe-openapi" value="📄 OpenAPI Export&#xa;YAML Generation&#xa;Download Spec" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1a73e8;strokeColor=#1557b0;fontColor=#ffffff;fontSize=11;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1220" y="140" width="180" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="fe-tech" value="Angular v19 · TypeScript · Angular Material · PrimeNG · NGX-Charts · RxJS" style="text;html=1;strokeColor=none;fillColor=none;align=right;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=10;fontColor=#6c8ebf;fontStyle=2;" vertex="1" parent="1">
+          <mxGeometry x="1100" y="105" width="450" height="25" as="geometry" />
+        </mxCell>
+
+        <!-- Arrow: Frontend to Backend -->
+        <mxCell id="arrow-fe-be" value="HTTP REST&#xa;JWT Bearer" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;strokeColor=#666666;strokeWidth=2;fontStyle=2;fontSize=10;" edge="1" parent="1" source="fe-explorer" target="be-bg">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- ===== BACKEND LAYER ===== -->
+        <mxCell id="be-bg" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;opacity=50;" vertex="1" parent="1">
+          <mxGeometry x="80" y="320" width="1480" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="be-label" value="Backend Layer" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;fontStyle=1;fontColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="90" y="325" width="150" height="30" as="geometry" />
+        </mxCell>
+
+        <mxCell id="be-auth" value="🔐 /auth&#xa;Register · Login&#xa;Token Refresh" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#2e7d32;strokeColor=#1b5e20;fontColor=#ffffff;fontSize=11;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="120" y="360" width="160" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="be-projects" value="📁 /projects&#xa;CRUD Projects&#xa;Trigger Analysis" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#2e7d32;strokeColor=#1b5e20;fontColor=#ffffff;fontSize=11;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="310" y="360" width="160" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="be-repos" value="📦 /repositories&#xa;GitHub Fetch&#xa;File Upload" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#2e7d32;strokeColor=#1b5e20;fontColor=#ffffff;fontSize=11;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="500" y="360" width="160" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="be-endpoints" value="🔍 /endpoints&#xa;List Endpoints&#xa;Get Details" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#2e7d32;strokeColor=#1b5e20;fontColor=#ffffff;fontSize=11;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="690" y="360" width="160" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="be-ai" value="🤖 /ai&#xa;Chat Endpoint&#xa;RAG Pipeline" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#2e7d32;strokeColor=#1b5e20;fontColor=#ffffff;fontSize=11;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="880" y="360" width="160" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="be-tests" value="🧪 /tests&#xa;Generate Tests&#xa;Download Code" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#2e7d32;strokeColor=#1b5e20;fontColor=#ffffff;fontSize=11;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1070" y="360" width="160" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="be-openapi" value="📄 /openapi&#xa;Generate YAML&#xa;OpenAPI 3.0" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#2e7d32;strokeColor=#1b5e20;fontColor=#ffffff;fontSize=11;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1260" y="360" width="160" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="be-tech" value="Python 3.11 · FastAPI 0.115 · Uvicorn · Pydantic v2 · SQLAlchemy 2.0 · python-jose · bcrypt" style="text;html=1;strokeColor=none;fillColor=none;align=right;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=10;fontColor=#82b366;fontStyle=2;" vertex="1" parent="1">
+          <mxGeometry x="900" y="325" width="650" height="25" as="geometry" />
+        </mxCell>
+
+        <!-- ===== SERVICES LAYER ===== -->
+        <!-- Parser -->
+        <mxCell id="parser-bg" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;opacity=50;" vertex="1" parent="1">
+          <mxGeometry x="80" y="540" width="440" height="200" as="geometry" />
+        </mxCell>
+        <mxCell id="parser-label" value="Repository Parser" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;fontStyle=1;fontColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="90" y="545" width="200" height="25" as="geometry" />
+        </mxCell>
+        <mxCell id="parser-java" value="☕ Java Spring Boot Parser&#xa;@RestController · @RequestMapping&#xa;@GetMapping · @PostMapping&#xa;@RequestBody · @PathVariable&#xa;DTO Discovery" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f9a825;strokeColor=#f57f17;fontColor=#1a1a1a;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="110" y="575" width="380" height="140" as="geometry" />
+        </mxCell>
+
+        <!-- Database -->
+        <mxCell id="db-bg" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;opacity=50;" vertex="1" parent="1">
+          <mxGeometry x="560" y="540" width="440" height="200" as="geometry" />
+        </mxCell>
+        <mxCell id="db-label" value="Data Layer" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;fontStyle=1;fontColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="570" y="545" width="150" height="25" as="geometry" />
+        </mxCell>
+        <mxCell id="db-postgres" value="🐘 PostgreSQL 16&#xa;users · projects&#xa;endpoints · parameters&#xa;dtos · chat_history" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#c62828;strokeColor=#b71c1c;fontColor=#ffffff;fontSize=11;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="580" y="575" width="180" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="db-pgvector" value="🔢 pgvector&#xa;knowledge_chunks&#xa;vector(1536)&#xa;HNSW Index&#xa;Semantic Search" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e53935;strokeColor=#b71c1c;fontColor=#ffffff;fontSize=11;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="790" y="575" width="180" height="140" as="geometry" />
+        </mxCell>
+
+        <!-- External Services -->
+        <mxCell id="ext-bg" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;opacity=50;" vertex="1" parent="1">
+          <mxGeometry x="1040" y="540" width="520" height="200" as="geometry" />
+        </mxCell>
+        <mxCell id="ext-label" value="External Services" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;fontStyle=1;fontColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="1050" y="545" width="200" height="25" as="geometry" />
+        </mxCell>
+        <mxCell id="ext-github" value="🐙 GitHub REST API v3&#xa;Fetch repo file tree&#xa;Read source files&#xa;Public + Private repos" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#6a1b9a;strokeColor=#4a148c;fontColor=#ffffff;fontSize=11;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1060" y="575" width="220" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="ext-groq" value="⚡ Groq API (Free Tier)&#xa;LLaMA 3-8b-8192&#xa;Mixtral-8x7b&#xa;Ultra-fast inference&#xa;No credit card needed" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#7b1fa2;strokeColor=#4a148c;fontColor=#ffffff;fontSize=11;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1310" y="575" width="220" height="140" as="geometry" />
+        </mxCell>
+
+        <!-- ===== RAG PIPELINE ===== -->
+        <mxCell id="rag-bg" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f0f4c3;strokeColor=#afb42b;opacity=70;" vertex="1" parent="1">
+          <mxGeometry x="80" y="790" width="1480" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="rag-label" value="RAG Pipeline (Phase 5)" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;fontStyle=1;fontColor=#afb42b;" vertex="1" parent="1">
+          <mxGeometry x="90" y="795" width="200" height="25" as="geometry" />
+        </mxCell>
+        <mxCell id="rag-1" value="User Question" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#827717;strokeColor=#558b2f;fontColor=#ffffff;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="120" y="830" width="130" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="rag-2" value="Embed Question" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#827717;strokeColor=#558b2f;fontColor=#ffffff;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="290" y="830" width="130" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="rag-3" value="pgvector Search&#xa;top-k chunks" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#827717;strokeColor=#558b2f;fontColor=#ffffff;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="460" y="830" width="130" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="rag-4" value="Build Prompt&#xa;+ Context" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#827717;strokeColor=#558b2f;fontColor=#ffffff;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="630" y="830" width="130" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="rag-5" value="Groq LLaMA 3&#xa;Inference" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#827717;strokeColor=#558b2f;fontColor=#ffffff;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="800" y="830" width="130" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="rag-6" value="Stream Answer&#xa;to Angular" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#827717;strokeColor=#558b2f;fontColor=#ffffff;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="970" y="830" width="130" height="40" as="geometry" />
+        </mxCell>
+
+        <!-- RAG arrows -->
+        <mxCell id="rag-a1" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#afb42b;strokeWidth=2;" edge="1" parent="1" source="rag-1" target="rag-2"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="rag-a2" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#afb42b;strokeWidth=2;" edge="1" parent="1" source="rag-2" target="rag-3"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="rag-a3" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#afb42b;strokeWidth=2;" edge="1" parent="1" source="rag-3" target="rag-4"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="rag-a4" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#afb42b;strokeWidth=2;" edge="1" parent="1" source="rag-4" target="rag-5"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="rag-a5" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#afb42b;strokeWidth=2;" edge="1" parent="1" source="rag-5" target="rag-6"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <!-- ===== CONNECTION ARROWS ===== -->
+        <!-- Backend to Parser -->
+        <mxCell id="arr-be-parser" value="trigger analysis" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#d6b656;strokeWidth=2;fontSize=10;fontStyle=2;" edge="1" parent="1" source="be-repos" target="parser-bg">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <!-- Backend to DB -->
+        <mxCell id="arr-be-db" value="SQLAlchemy ORM" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#b85450;strokeWidth=2;fontSize=10;fontStyle=2;" edge="1" parent="1" source="be-endpoints" target="db-postgres">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <!-- Backend to GitHub -->
+        <mxCell id="arr-be-github" value="httpx async" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#9673a6;strokeWidth=2;fontSize=10;fontStyle=2;" edge="1" parent="1" source="be-repos" target="ext-github">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <!-- Backend to Groq -->
+        <mxCell id="arr-be-groq" value="httpx async" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#9673a6;strokeWidth=2;fontSize=10;fontStyle=2;" edge="1" parent="1" source="be-ai" target="ext-groq">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <!-- Parser to DB -->
+        <mxCell id="arr-parser-db" value="store results" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#d6b656;strokeWidth=2;fontSize=10;fontStyle=2;" edge="1" parent="1" source="parser-bg" target="db-postgres">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <!-- Parser to pgvector -->
+        <mxCell id="arr-parser-vec" value="index chunks" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#d6b656;strokeWidth=2;fontSize=10;fontStyle=2;" edge="1" parent="1" source="parser-bg" target="db-pgvector">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
