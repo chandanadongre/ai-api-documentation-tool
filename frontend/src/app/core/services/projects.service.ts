@@ -42,4 +42,16 @@ export class ProjectsService {
   getDTOs(project_id: string) {
     return this.http.get<DTO[]>(`${this.API}/projects/${project_id}/dtos`);
   }
+
+  getOpenapiJson(project_id: string) {
+    return this.http.get<any>(`${this.API}/projects/${project_id}/openapi.json`);
+  }
+
+  downloadOpenapiYaml(project_id: string) {
+    return this.http.get(`${this.API}/projects/${project_id}/openapi.yaml`, { responseType: 'blob' });
+  }
+
+  playground(project_id: string, method: string, url: string, headers: Record<string, string>, body: any) {
+    return this.http.post<any>(`${this.API}/projects/${project_id}/playground`, { method, url, headers, body });
+  }
 }
