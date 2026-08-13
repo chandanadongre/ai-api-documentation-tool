@@ -30,3 +30,39 @@ export interface ProjectCreate {
   source_type: 'github' | 'upload';
   github_url?: string;
 }
+
+export interface Parameter {
+  id: string;
+  name: string;
+  param_type: 'path' | 'query' | 'header' | 'body';
+  data_type: string | null;
+  required: boolean;
+  description: string | null;
+}
+
+export interface Endpoint {
+  id: string;
+  project_id: string;
+  http_method: string;
+  path: string;
+  controller_name: string | null;
+  method_name: string | null;
+  description: string | null;
+  auth_required: boolean;
+  source_file: string | null;
+  parameters: Parameter[];
+}
+
+export interface DTOField {
+  name: string;
+  type: string;
+  required: boolean;
+}
+
+export interface DTO {
+  id: string;
+  name: string;
+  dto_type: string | null;
+  source_file: string | null;
+  fields: DTOField[] | null;
+}

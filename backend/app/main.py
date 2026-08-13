@@ -2,15 +2,15 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.core.config import settings
 from app.db.session import Base, engine
-from app.routers import auth, projects
+from app.models import user, project, endpoint, dto  # noqa: ensure all models registered
+from app.routers import auth, projects, repositories, endpoints
 
-# Create all tables on startup (use alembic for production migrations)
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI(
     title="API Documentation AI",
     description="AI-powered API discovery, documentation and testing platform",
-    version="0.1.0",
+    version="0.2.0",
 )
 
 app.add_middleware(
@@ -23,8 +23,10 @@ app.add_middleware(
 
 app.include_router(auth.router)
 app.include_router(projects.router)
+app.include_router(repositories.router)
+app.include_router(endpoints.router)
 
 
 @app.get("/health")
 def health():
-    return {"status": "ok", "service": "APIForge AI"}
+    return {"status": "ok", "service": "API Documentation AI", "version": "0.2.0"}
