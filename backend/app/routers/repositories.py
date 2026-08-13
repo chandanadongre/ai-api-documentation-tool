@@ -11,6 +11,7 @@ from app.core.security import get_current_user
 from app.services.github_fetcher import fetch_java_files
 from app.services.java_parser import parse_java_files
 from app.services.zip_extractor import extract_java_files
+from app.services.retriever import index_project
 
 router = APIRouter(prefix="/repositories", tags=["repositories"])
 
@@ -37,6 +38,7 @@ def _store_results(db: Session, project_id: str, parsed: dict):
         project.endpoint_count = len(parsed["endpoints"])
         project.status = "ready"
         db.commit()
+        index_project(project_id, db)
     except Exception as e:
         db.rollback()
         project = db.query(Project).filter(Project.id == project_id).first()

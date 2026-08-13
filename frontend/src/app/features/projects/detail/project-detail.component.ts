@@ -17,7 +17,7 @@ import { interval, Subscription } from 'rxjs';
 import { switchMap, takeWhile } from 'rxjs/operators';
 import { ProjectsService } from '../../../core/services/projects.service';
 import { AuthService } from '../../../core/services/auth.service';
-import { Project, Endpoint, ChatMessage } from '../../../core/models/models';
+import { Project, Endpoint, ChatMessage, TestSuite } from '../../../core/models/models';
 
 @Component({
   selector: 'app-project-detail',
@@ -323,6 +323,56 @@ import { Project, Endpoint, ChatMessage } from '../../../core/models/models';
                 </div>
               </mat-tab>
 
+              <!-- ===== TESTS TAB ===== -->
+              <mat-tab label="🧪 Tests">
+                <div class="tab-content tests-tab">
+                  <h3>Test Generation</h3>
+                  <p class="muted">Generate test suites for this API using AI. Choose a format and click Generate.</p>
+
+                  <div class="tests-controls">
+                    <mat-form-field appearance="outline">
+                      <mat-label>Format</mat-label>
+                      <mat-select [(ngModel)]="testFormat">
+                        <mat-option value="junit">JUnit 5 (Java)</mat-option>
+                        <mat-option value="pytest">pytest (Python)</mat-option>
+                        <mat-option value="postman">Postman Collection</mat-option>
+                      </mat-select>
+                    </mat-form-field>
+                    <button mat-flat-button color="primary" (click)="generateTests()" [disabled]="testGenerating()">
+                      @if (testGenerating()) { <mat-spinner diameter="18" style="display:inline-block;margin-right:8px" /> }
+                      ⚡ Generate
+                    </button>
+                  </div>
+
+                  @if (testSuites().length > 0) {
+                    <h3 style="margin-top:28px">Generated Suites</h3>
+                    <div class="suite-list">
+                      @for (suite of testSuites(); track suite.id) {
+                        <div class="suite-card" [class.active]="selectedSuite()?.id === suite.id" (click)="selectSuite(suite)">
+                          <div class="suite-info">
+                            <span class="suite-badge suite-{{ suite.format }}">{{ suite.format }}</span>
+                            <span class="suite-date">{{ suite.created_at | date:'MMM d, HH:mm' }}</span>
+                          </div>
+                          <button mat-icon-button (click)="downloadSuite(suite, $event)" matTooltip="Download">
+                            <mat-icon>download</mat-icon>
+                          </button>
+                        </div>
+                      }
+                    </div>
+                  }
+
+                  @if (selectedSuite()) {
+                    <div class="suite-preview">
+                      <div class="preview-header">
+                        <label class="field-label">{{ selectedSuite()!.format }} — Preview</label>
+                        <button mat-icon-button (click)="copySuite()" matTooltip="Copy"><mat-icon>content_copy</mat-icon></button>
+                      </div>
+                      <pre class="response-body suite-code">{{ selectedSuiteContent() }}</pre>
+                    </div>
+                  }
+                </div>
+              </mat-tab>
+
             </mat-tab-group>
           </div>
         </div>
@@ -456,6 +506,23 @@ import { Project, Endpoint, ChatMessage } from '../../../core/models/models';
     .chat-input:focus { border-color:#1a73e8; }
     .chat-actions { display:flex; flex-direction:column; gap:4px; }
 
+    /* Tests tab */
+    .tests-tab { max-width:800px; }
+    .tests-controls { display:flex; align-items:center; gap:16px; margin:16px 0; }
+    .tests-controls mat-form-field { width:220px; }
+    .suite-list { display:flex; flex-direction:column; gap:8px; margin-bottom:20px; }
+    .suite-card { display:flex; align-items:center; justify-content:space-between; padding:10px 14px; border:1px solid #e0e0e0; border-radius:8px; cursor:pointer; transition:background 0.1s; }
+    .suite-card:hover { background:#f5f5f5; }
+    .suite-card.active { background:#e3f2fd; border-color:#1a73e8; }
+    .suite-info { display:flex; align-items:center; gap:12px; }
+    .suite-badge { padding:3px 8px; border-radius:4px; font-size:11px; font-weight:700; text-transform:uppercase; }
+    .suite-junit { background:#fff3e0; color:#e65100; }
+    .suite-pytest { background:#e8f5e9; color:#2e7d32; }
+    .suite-postman { background:#fce4ec; color:#c62828; }
+    .suite-date { font-size:12px; color:#888; }
+    .suite-preview { margin-top:8px; }
+    .suite-code { max-height:500px; }
+
     /* Shared empty state */
     .empty-state-inline { display:flex; flex-direction:column; align-items:center; justify-content:center; height:300px; color:#ccc; gap:12px; }
     .empty-state-inline mat-icon { font-size:48px; width:48px; height:48px; }
@@ -490,6 +557,13 @@ export class ProjectDetailComponent implements OnInit, OnDestroy {
     'Generate a curl example for the first POST endpoint.',
     'What fields are required for creating a resource?',
   ];
+
+  // Test generation state
+  testFormat = 'pytest';
+  testGenerating = signal(false);
+  testSuites = signal<TestSuite[]>([]);
+  selectedSuite = signal<TestSuite | null>(null);
+  selectedSuiteContent = signal('');
 
   private pollSub?: Subscription;
   private projectId = '';
@@ -532,6 +606,7 @@ export class ProjectDetailComponent implements OnInit, OnDestroy {
       this.methodCounts.set(Object.entries(counts).map(([method, count]) => ({ method, count })));
     });
     this.loadChatHistory();
+    this.loadTestSuites();
   }
 
   selectEndpoint(ep: Endpoint) {
@@ -640,6 +715,57 @@ export class ProjectDetailComponent implements OnInit, OnDestroy {
 
   onChatKeydown(event: KeyboardEvent) {
     if (event.key === 'Enter' && !event.shiftKey) { event.preventDefault(); this.sendMessage(); }
+  }
+
+  loadTestSuites() {
+    this.projectsService.listTestSuites(this.projectId).subscribe({
+      next: (suites) => this.testSuites.set(suites),
+      error: () => {},
+    });
+  }
+
+  generateTests() {
+    this.testGenerating.set(true);
+    this.projectsService.generateTests(this.projectId, this.testFormat).subscribe({
+      next: () => {
+        this.testGenerating.set(false);
+        this.loadTestSuites();
+        this.snackBar.open('Tests generated!', '', { duration: 2500 });
+      },
+      error: () => {
+        this.testGenerating.set(false);
+        this.snackBar.open('Generation failed', 'Close', { duration: 3000 });
+      },
+    });
+  }
+
+  selectSuite(suite: TestSuite) {
+    if (this.selectedSuite()?.id === suite.id) { this.selectedSuite.set(null); return; }
+    this.selectedSuite.set(suite);
+    this.projectsService.downloadTestSuite(this.projectId, suite.id).subscribe({
+      next: (content) => this.selectedSuiteContent.set(content),
+      error: () => this.snackBar.open('Failed to load suite', 'Close', { duration: 3000 }),
+    });
+  }
+
+  downloadSuite(suite: TestSuite, event: Event) {
+    event.stopPropagation();
+    this.projectsService.downloadTestSuite(this.projectId, suite.id).subscribe({
+      next: (content) => {
+        const ext = suite.format === 'junit' ? 'java' : suite.format === 'pytest' ? 'py' : 'json';
+        const blob = new Blob([content], { type: 'text/plain' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url; a.download = `tests-${suite.format}.${ext}`; a.click();
+        URL.revokeObjectURL(url);
+      },
+      error: () => this.snackBar.open('Download failed', 'Close', { duration: 3000 }),
+    });
+  }
+
+  copySuite() {
+    navigator.clipboard.writeText(this.selectedSuiteContent());
+    this.snackBar.open('Copied to clipboard', '', { duration: 2000 });
   }
 
   ngOnDestroy() { this.pollSub?.unsubscribe(); }

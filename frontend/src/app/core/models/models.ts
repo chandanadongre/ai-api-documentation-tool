@@ -72,3 +72,9 @@ export interface ChatMessage {
   role: 'user' | 'assistant';
   content: string;
 }
+
+export interface TestSuite {
+  id: string;
+  format: 'junit' | 'pytest' | 'postman';
+  created_at: string;
+}

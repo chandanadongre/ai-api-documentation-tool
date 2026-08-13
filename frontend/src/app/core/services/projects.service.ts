@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Project, ProjectCreate, Endpoint, DTO, ChatMessage } from '../models/models';
+import { Project, ProjectCreate, Endpoint, DTO, ChatMessage, TestSuite } from '../models/models';
 
 @Injectable({ providedIn: 'root' })
 export class ProjectsService {
@@ -68,4 +68,17 @@ export class ProjectsService {
       `${this.API}/projects/${project_id}/ai/chat`, { message }
     );
   }
-}
+
+  generateTests(project_id: string, format: string) {
+    return this.http.post<{ id: string; format: string; created_at: string }>(
+      `${this.API}/projects/${project_id}/tests/generate`, { format }
+    );
+  }
+
+  listTestSuites(project_id: string) {
+    return this.http.get<TestSuite[]>(`${this.API}/projects/${project_id}/tests`);
+  }
+
+  downloadTestSuite(project_id: string, suite_id: string) {
+    return this.http.get(`${this.API}/projects/${project_id}/tests/${suite_id}/download`, { responseType: 'text' });
+  }

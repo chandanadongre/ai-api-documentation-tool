@@ -2,6 +2,7 @@ from typing import List, Dict
 from sqlalchemy.orm import Session
 from app.models.endpoint import Endpoint
 from app.models.dto import DTO, Parameter
+from app.services.retriever import retrieve
 
 
 INTENT_KEYWORDS = {
@@ -46,6 +47,7 @@ def build_messages(project_name: str, project_id: str, question: str,
                    history: List[Dict], db: Session) -> List[Dict]:
     endpoints = db.query(Endpoint).filter(Endpoint.project_id == project_id).all()
     dtos = db.query(DTO).filter(DTO.project_id == project_id).all()
+    retrieved = retrieve(project_id, question, db, top_k=5)
 
     intent = detect_intent(question)
 
@@ -66,6 +68,9 @@ ENDPOINTS:
 
 DATA MODELS (DTOs):
 {_summarise_dtos(dtos) or 'No DTOs discovered yet.'}
+
+RELEVANT CONTEXT (semantic search):
+{chr(10).join(retrieved) or 'N/A'}
 
 Rules:
 - Only answer questions about this API.
