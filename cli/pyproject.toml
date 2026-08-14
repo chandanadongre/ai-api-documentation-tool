@@ -1,0 +1,20 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.backends.legacy:build"
+
+[project]
+name = "api-forge-cli"
+version = "0.1.0"
+description = "CLI for API Documentation AI — analyze Spring Boot projects locally"
+requires-python = ">=3.11"
+dependencies = [
+    "click>=8.1",
+    "rich>=13.0",
+    "pyyaml>=6.0",
+]
+
+[project.scripts]
+api-forge = "api_forge.main:cli"
+
+[tool.setuptools.packages.find]
+where = ["."]
