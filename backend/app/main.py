@@ -10,7 +10,7 @@ Base.metadata.create_all(bind=engine)
 app = FastAPI(
     title="API Documentation AI",
     description="AI-powered API discovery, documentation and testing platform",
-    version="0.6.0",
+    version="0.8.0",
 )
 
 app.add_middleware(
@@ -32,4 +32,4 @@ app.include_router(tests.router)
 
 @app.get("/health")
 def health():
-    return {"status": "ok", "service": "API Documentation AI", "version": "0.3.0"}
+    return {"status": "ok", "service": "API Documentation AI", "version": "0.8.0"}
